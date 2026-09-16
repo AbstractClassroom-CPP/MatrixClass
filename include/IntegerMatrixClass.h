@@ -1,11 +1,11 @@
-#ifndef MATRIX_CLASS_H
-#define MATRIX_CLASS_H
+#ifndef INTEGER_MATRIX_CLASS_H
+#define INTEGER_MATRIX_CLASS_H
 
 #include <vector>
 
-class MatrixClass {
+class IntegerMatrixClass {
 public:
-    MatrixClass(int rows, int cols);
+    IntegerMatrixClass(int rows, int cols);
 
     int numRows() const;
     int numCols() const;
@@ -13,7 +13,7 @@ public:
     int get(int row, int col) const;
     void set(int row, int col, int value);
 
-    MatrixClass add(const MatrixClass& other) const;
+    IntegerMatrixClass add(const IntegerMatrixClass& other) const;
 
 private:
     int rows_;
