@@ -1,5 +1,5 @@
 # MatrixClass
-
+silly
 A simple matrix class template that other C++ projects can use as a CMake dependency.
 Version `4.0.0` adds GoogleTest unit tests for the existing `MatrixClass<int>` and
 `MatrixClass<double>` implementation.
