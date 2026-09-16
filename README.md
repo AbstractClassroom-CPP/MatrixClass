@@ -1,7 +1,8 @@
 # MatrixClass
 
 A simple matrix class template that other C++ projects can use as a CMake dependency.
-Version `3.0.0` provides `MatrixClass<int>` and `MatrixClass<double>` from one implementation.
+Version `4.0.0` adds GoogleTest unit tests for the existing `MatrixClass<int>` and
+`MatrixClass<double>` implementation.
 The template parameter `T` selects the value type used by storage, `get()`, and `set()`.
 
 | Library version | Classes | Example consumer |
@@ -9,9 +10,10 @@ The template parameter `T` selects the value type used by storage, `get()`, and 
 | [1.0.0](https://github.com/AbstractClassroom-CPP/MatrixClass/tree/1.0.0) | `MatrixClass` with `int` values | NSBE-Demo `0.1.0` |
 | [2.0.0](https://github.com/AbstractClassroom-CPP/MatrixClass/tree/2.0.0) | `IntegerMatrixClass` and `DoubleMatrixClass` | NSBE-Demo `0.2.0` |
 | [3.0.0](https://github.com/AbstractClassroom-CPP/MatrixClass/tree/3.0.0) | `MatrixClass<int>` and `MatrixClass<double>` | NSBE-Demo `0.3.0` |
+| [4.0.0](https://github.com/AbstractClassroom-CPP/MatrixClass/tree/4.0.0) | Same template, with GoogleTest unit tests | No new demo release |
 
 The earlier APIs remain available in tags `1.0.0` and `2.0.0`. Version `3.0.0`
-replaces the two separately named classes with `MatrixClass<T>` in `MatrixClass.h`.
+introduced `MatrixClass<T>` in `MatrixClass.h`; version `4.0.0` keeps that API and implementation.
 The CMake target remains `MatrixClass::MatrixClass`.
 
 ```text
@@ -23,6 +25,9 @@ MatrixClass/
 │   └── MatrixClass.cpp
 ├── example/
 │   └── main.cpp
+├── test/
+│   ├── CMakeLists.txt
+│   └── MatrixClassTest.cpp
 ├── README.md
 └── .gitignore
 ```
@@ -65,17 +70,17 @@ can stay in the source file. Include the header and link the library to use eith
 
 ## Add it to another CMake project
 
-With Git, CMake 3.14 or newer, and a C++ compiler installed, put this in the consuming project's `CMakeLists.txt` alongside its `main.cpp`:
+With Git, CMake 3.16 or newer, and a C++ compiler installed, put this in the consuming project's `CMakeLists.txt` alongside its `main.cpp`:
 
 ```cmake
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 project(MyMatrixApp LANGUAGES CXX)
 
 include(FetchContent)
 FetchContent_Declare(
     matrixclass
     GIT_REPOSITORY https://github.com/AbstractClassroom-CPP/MatrixClass.git
-    GIT_TAG 3.0.0
+    GIT_TAG 4.0.0
 )
 FetchContent_MakeAvailable(matrixclass)
 
@@ -86,15 +91,21 @@ target_link_libraries(my_app PRIVATE MatrixClass::MatrixClass)
 CMake fetches the source during configuration and builds the library with your program.
 The target supplies the header directory and the requirement for at least C++11.
 There is no manual source copying or separate library installation.
-The library's example is built only when configuring the MatrixClass repository directly.
+The example and tests are built only when configuring the MatrixClass repository directly.
+Applications that use the library as a dependency do not fetch or build GoogleTest.
 
-`GIT_TAG 3.0.0` selects the template release. Older applications can still select
-`1.0.0` or `2.0.0` to use their corresponding interfaces.
-[NSBE-Demo](https://github.com/AbstractClassroom-CPP/NSBE-Demo) is a complete consuming project.
+`GIT_TAG 4.0.0` selects the tested template release. Older applications can still
+select `1.0.0`, `2.0.0`, or `3.0.0`.
+[NSBE-Demo](https://github.com/AbstractClassroom-CPP/NSBE-Demo) is a complete consuming
+project; its existing `0.3.0` release remains pinned to MatrixClass `3.0.0`.
 
-## Build this repository's example
+## Build this repository's example and tests
 
 Run these commands from the `MatrixClass` directory.
+
+Use Git, CMake 3.16 or newer, and a compiler supporting C++17 for the tests.
+The first configuration downloads the pinned [GoogleTest v1.18.0](https://github.com/google/googletest/releases/tag/v1.18.0),
+which requires C++17. The matrix library itself still requires only C++11.
 
 ### Mac
 
@@ -130,3 +141,25 @@ Double matrix
 1.75 3
 4.25 5.5
 ```
+
+## Run the unit tests
+
+After building, run these commands on Mac or in Windows Git Bash:
+
+```bash
+cd build
+ctest --output-on-failure
+cd ..
+```
+
+The six tests cover dimensions and zero initialization, get/set, integer addition,
+double addition, mismatched dimensions, and invalid indices. Addition checks also
+verify that the input matrices stay unchanged. Fractional sums use `EXPECT_NEAR`
+with a tolerance of `1e-12`.
+
+Before and after changing the class, build again and rerun CTest. A failed test
+returns a nonzero exit status and identifies the behavior that changed.
+
+To build only the library and example, configure with `-DBUILD_TESTING=OFF`.
+See the [GoogleTest CMake quickstart](https://google.github.io/googletest/quickstart-cmake.html)
+for the test framework setup.
