@@ -1,7 +1,7 @@
 # MatrixClass
 
 A simple integer matrix class that other C++ projects can use as a CMake dependency.
-Development currently uses the `main` branch.
+Version `1.0.0` provides the original `MatrixClass` with integer values.
 
 ```text
 MatrixClass/
@@ -48,7 +48,7 @@ include(FetchContent)
 FetchContent_Declare(
     matrixclass
     GIT_REPOSITORY https://github.com/AbstractClassroom-CPP/MatrixClass.git
-    GIT_TAG main
+    GIT_TAG 1.0.0
 )
 FetchContent_MakeAvailable(matrixclass)
 
@@ -61,7 +61,7 @@ The target supplies the header directory and the requirement for at least C++11.
 There is no manual source copying or separate library installation.
 The library's example is built only when configuring the MatrixClass repository directly.
 
-`GIT_TAG main` follows the branch requested for this demonstration. A fresh configuration fetches its current code; this is not a fixed release.
+`GIT_TAG 1.0.0` selects the original integer-only release.
 [NSBE-Demo](https://github.com/AbstractClassroom-CPP/NSBE-Demo) is a complete consuming project.
 
 ## Build this repository's example
