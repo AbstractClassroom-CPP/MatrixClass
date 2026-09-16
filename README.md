@@ -1,58 +1,53 @@
 # MatrixClass
 
-Two simple matrix classes that other C++ projects can use as one CMake dependency.
-Version `2.0.0` provides `IntegerMatrixClass` for `int` values and `DoubleMatrixClass`
-for approximate values stored as `double`.
-
-We copied the original implementation, changed the class names, and changed the
-value type in the double implementation. Neither matrix class is a template.
+A simple matrix class template that other C++ projects can use as a CMake dependency.
+Version `3.0.0` provides `MatrixClass<int>` and `MatrixClass<double>` from one implementation.
+The template parameter `T` selects the value type used by storage, `get()`, and `set()`.
 
 | Library version | Classes | Example consumer |
 | --- | --- | --- |
 | [1.0.0](https://github.com/AbstractClassroom-CPP/MatrixClass/tree/1.0.0) | `MatrixClass` with `int` values | NSBE-Demo `0.1.0` |
 | [2.0.0](https://github.com/AbstractClassroom-CPP/MatrixClass/tree/2.0.0) | `IntegerMatrixClass` and `DoubleMatrixClass` | NSBE-Demo `0.2.0` |
+| [3.0.0](https://github.com/AbstractClassroom-CPP/MatrixClass/tree/3.0.0) | `MatrixClass<int>` and `MatrixClass<double>` | NSBE-Demo `0.3.0` |
 
-The original class is preserved in tag `1.0.0`. Version `2.0.0` replaces
-`MatrixClass.h` and the `MatrixClass` C++ class with the two named classes below.
-The CMake target is still `MatrixClass::MatrixClass`.
+The earlier APIs remain available in tags `1.0.0` and `2.0.0`. Version `3.0.0`
+replaces the two separately named classes with `MatrixClass<T>` in `MatrixClass.h`.
+The CMake target remains `MatrixClass::MatrixClass`.
 
 ```text
 MatrixClass/
 ├── CMakeLists.txt
 ├── include/
-│   ├── IntegerMatrixClass.h
-│   └── DoubleMatrixClass.h
+│   └── MatrixClass.h
 ├── src/
-│   ├── IntegerMatrixClass.cpp
-│   └── DoubleMatrixClass.cpp
+│   └── MatrixClass.cpp
 ├── example/
 │   └── main.cpp
 ├── README.md
 └── .gitignore
 ```
 
-## Use the classes
+## Use the template
 
 ```cpp
-#include "IntegerMatrixClass.h"
-#include "DoubleMatrixClass.h"
+#include "MatrixClass.h"
 
 #include <iostream>
 
 int main() {
-    IntegerMatrixClass a(2, 3); // Rows, columns; every entry starts at zero.
-    IntegerMatrixClass b(2, 3);
+    MatrixClass<int> a(2, 3); // Rows, columns; every entry starts at zero.
+    MatrixClass<int> b(2, 3);
     a.set(0, 1, 4);     // Row and column indices start at zero.
     b.set(0, 1, 2);
-    IntegerMatrixClass c = a.add(b);
+    MatrixClass<int> c = a.add(b);
     int value = c.get(0, 1); // 6
     // c.numRows() returns 2; c.numCols() returns 3.
 
-    DoubleMatrixClass x(2, 3);
-    DoubleMatrixClass y(2, 3);
+    MatrixClass<double> x(2, 3);
+    MatrixClass<double> y(2, 3);
     x.set(0, 1, 4.5);
     y.set(0, 1, 1.25);
-    DoubleMatrixClass z = x.add(y);
+    MatrixClass<double> z = x.add(y);
     double approximateValue = z.get(0, 1); // 5.75
 
     std::cout << value << ' ' << approximateValue << '\n';
@@ -60,9 +55,13 @@ int main() {
 }
 ```
 
-Each class adds another matrix of its own type. Addition returns a new matrix and
-leaves both inputs unchanged. Dimensions and indices remain `int` in both classes.
+Addition takes another matrix with the same value type, returns a new matrix, and
+leaves both inputs unchanged. Dimensions and indices remain `int`.
 Adding different dimensions throws `std::invalid_argument`; an invalid index throws `std::out_of_range`.
+
+This release supports `int` and `double`. `src/MatrixClass.cpp` explicitly
+instantiates both types from the same template definitions, so those definitions
+can stay in the source file. Include the header and link the library to use either type.
 
 ## Add it to another CMake project
 
@@ -76,7 +75,7 @@ include(FetchContent)
 FetchContent_Declare(
     matrixclass
     GIT_REPOSITORY https://github.com/AbstractClassroom-CPP/MatrixClass.git
-    GIT_TAG 2.0.0
+    GIT_TAG 3.0.0
 )
 FetchContent_MakeAvailable(matrixclass)
 
@@ -89,8 +88,8 @@ The target supplies the header directory and the requirement for at least C++11.
 There is no manual source copying or separate library installation.
 The library's example is built only when configuring the MatrixClass repository directly.
 
-`GIT_TAG 2.0.0` selects the release containing both classes. Use `GIT_TAG 1.0.0`
-with the original `MatrixClass.h` interface when building an older application.
+`GIT_TAG 3.0.0` selects the template release. Older applications can still select
+`1.0.0` or `2.0.0` to use their corresponding interfaces.
 [NSBE-Demo](https://github.com/AbstractClassroom-CPP/NSBE-Demo) is a complete consuming project.
 
 ## Build this repository's example

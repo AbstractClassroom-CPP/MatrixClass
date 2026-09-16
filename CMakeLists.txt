@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(MatrixClass VERSION 2.0.0 LANGUAGES CXX)
+project(MatrixClass VERSION 3.0.0 LANGUAGES CXX)
 
-add_library(MatrixClass STATIC
-    src/IntegerMatrixClass.cpp
-    src/DoubleMatrixClass.cpp
-)
+add_library(MatrixClass STATIC src/MatrixClass.cpp)
 add_library(MatrixClass::MatrixClass ALIAS MatrixClass)
 
 target_include_directories(MatrixClass PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
